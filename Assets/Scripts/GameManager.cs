@@ -82,6 +82,8 @@ public class GameManager : MonoBehaviour {
     }
 
     private void SpawnBall(ushort Id, string Avatar, int X, int Y) {
+        Debug.Log("Spawnball with Id => " + Id);
+
         var gameBall = memberPool.GetFromPool(Avatar);
         gameBall.gameObject.name = Id.ToString();
 

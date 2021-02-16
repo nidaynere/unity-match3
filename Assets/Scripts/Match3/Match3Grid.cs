@@ -50,9 +50,11 @@ namespace Match3
             Vector[] matches = new Vector[sizeX];
 
             for (int y = sizeY - 1; y >= 0; y--) {
-                int protection = 1000;
+                int protection = 1;
                 while (protection > 0) {
                     protection--;
+
+                    UnityEngine.Debug.Log("checking for match at row => " + y);
 
                     int matchCount = GetMatchesAtRow(y, ref matches);
 
@@ -63,6 +65,8 @@ namespace Match3
 
                     // clear all.
                     for (int i=0; i<matchCount; i++) {
+                        UnityEngine.Debug.Log("match at => " + matches[i]);
+
                         var member = GetFromPosition(matches[i]);
 
                         if (member != null) {
@@ -70,42 +74,41 @@ namespace Match3
                         }
 
                         RemoveFromPosition(matches[i]);
-
-                        // bring from top.
-                        for (int b = matches[i].Y; b > 0; b--) {
-                            if (Grid[b - 1][matches[i].X] != null)
-                            {
-                                newPositions.Add(new Vector(matches[i].X, b));
-                                moveds.Add(Grid[b][matches[i].X].Id);
-                            }
-
-                            Grid[b][matches[i].X] = Grid[b - 1][matches[i].X];
-                        }
                     }
                 }
             }
+
+            // TODO BRING FROM TOP.
+            // bring from top.
+            for (int b = matches[i].Y; b > 0; b--)
+            {
+                if (Grid[b - 1][matches[i].X] != null)
+                {
+                    newPositions.Add(new Vector(matches[i].X, b));
+                    moveds.Add(Grid[b - 1][matches[i].X].Id);
+                }
+
+                Grid[b][matches[i].X] = Grid[b - 1][matches[i].X];
+                Grid[b - 1][matches[i].X] = null;
+            }
         }
 
-        public bool RemoveFromPosition(Vector position)
-        {
-            if (position.Y < 0 || position.Y >= Size.Y)
-            {
-                return false;
+        public ushort RemoveFromPosition(Vector position) {
+            if (position.Y < 0 || position.Y >= Size.Y) {
+                return ushort.MinValue;
             }
 
-            if (position.X < 0 || position.X >= Size.X)
-            {
-                return false;
+            if (position.X < 0 || position.X >= Size.X) {
+                return ushort.MinValue;
             }
 
-            if (Grid[position.Y][position.X] == null)
-            {
-                return false;
+            if (Grid[position.Y][position.X] == null) {
+                return ushort.MinValue;
             }
 
+            var id = Grid[position.Y][position.X].Id;
             Grid[position.Y][position.X] = null;
-
-            return true;
+            return id;
         }
 
         private Match3Member GetFromPosition (Vector position) {
@@ -138,15 +141,18 @@ namespace Match3
             int match = 1;
 
             for (int x = 0; x < xLength - 1; x++) {
-                UnityEngine.Debug.Log("checking for => " + Grid[rowIndex][x].Id);
-                if (Grid[rowIndex][x] != null && Grid[rowIndex][x].Avatar.Equals(Grid[rowIndex][x+1].Avatar)) {
+                bool matchOnThisPoint = Grid[rowIndex][x] != null && Grid[rowIndex][x + 1] != null && Grid[rowIndex][x].Avatar.Equals(Grid[rowIndex][x + 1].Avatar);
+                if (matchOnThisPoint) {
                     match++;
-                    UnityEngine.Debug.Log("total Match == " + match);
+                    UnityEngine.Debug.Log("total Match == " + match + " at row => " + rowIndex);
                 }
-                else {// no match.
+
+                if (!matchOnThisPoint || x == xLength-2) {
                     if (match >= minMatch) { // gather last match.
+                        UnityEngine.Debug.Log("found match len!");
                         for (int i = matchStartPoint; i < match; i++) {
-                            matches[counter++] = new Vector (rowIndex, i);
+                            UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cylinder).transform.position = new UnityEngine.Vector3(i, -rowIndex, 0);
+                            matches[counter++] = new Vector (i, rowIndex);
                         }
                     }
 

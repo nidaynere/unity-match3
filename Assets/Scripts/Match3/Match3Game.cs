@@ -30,7 +30,10 @@ namespace Match3
 
             for (int y = 0; y < sizeY; y++) {
                 for (int x = 0; x < sizeX; x++) {
-                    Members?.Invoke(map.Grid[y][x].Id, map.Grid[y][x].Avatar, x, y);
+                    if (map.Grid[y][x] != null) {
+                        UnityEngine.Debug.Log("Spawn message => " + map.Grid[y][x].Avatar);
+                        Members?.Invoke(map.Grid[y][x].Id, map.Grid[y][x].Avatar, x, y);
+                    }
                 }
             }
         }
@@ -41,7 +44,9 @@ namespace Match3
 
 
         public void InteractMember (int X, int Y) {
-            map.RemoveFromPosition(new Vector(X, Y));
+            ushort id = map.RemoveFromPosition(new Vector(X, Y));
+
+            GameEvents.OnMemberDestroyed?.Invoke(id);
 
             List<ushort> destroyed;
             List<ushort> moveds;

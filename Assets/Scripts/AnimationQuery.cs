@@ -33,7 +33,7 @@ public struct AnimationQuery
         {
             while (isPlaying)
             {
-                yield return new WaitForSeconds(gameSettings.CombineAnimationDelay);
+                yield return new WaitForSeconds(gameSettings.AnimationDelay);
             }
 
             if (Query.Count == 0)

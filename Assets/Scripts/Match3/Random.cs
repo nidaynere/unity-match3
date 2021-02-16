@@ -1,7 +1,6 @@
 ﻿namespace Match3
 {
-    public static class Random
-    {
+    public static class Random {
         private static System.Random randomizer;
         public static int Range(int min, int max)
         {

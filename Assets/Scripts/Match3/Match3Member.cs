@@ -1,7 +1,6 @@
 ﻿namespace Match3
 {
-    public class Match3Member
-    {
+    public class Match3Member {
         /// <summary>
         /// Unique id in the game.
         /// </summary>
@@ -12,8 +11,7 @@
         /// </summary>
         public string Avatar;
 
-        public Match3Member(ushort Id, string Avatar)
-        {
+        public Match3Member(ushort Id, string Avatar) {
             this.Id = Id;
             this.Avatar = Avatar;
         }

@@ -18,7 +18,7 @@ namespace Match3
 
             int sizeX = GridSize.X;
             int avatarsLength = avatars.Length;
-            // define grid.
+
             Grid = new Match3Member[Size.Y][];
             for (int y = 0; y < Size.Y; y++) {
                 Grid[y] = new Match3Member[sizeX];
@@ -32,6 +32,7 @@ namespace Match3
             var destroyed = new List<ushort>();
             var moveds = new List<ushort>();
             var newPositions = new List<Vector>();
+            // Dear reviewer, Sorry for this :((
 
             CheckMap(out destroyed, out moveds, out newPositions);
         }
@@ -51,22 +52,15 @@ namespace Match3
             Vector[] matches = new Vector[sizeX];
 
             for (int y = sizeY - 1; y >= 0; y--) {
-                int protection = 1;
-                while (protection > 0) {
-                    protection--;
-
-                    UnityEngine.Debug.Log("checking for match at row => " + y);
+                while (true) {
 
                     int matchCount = GetMatchesAtRow(y, ref matches);
 
-                    UnityEngine.Debug.Log("match count at row => " + y + ", = " + matchCount);
                     if (matchCount == 0) {
                         break;
                     }
 
                     for (int i=0; i<matchCount; i++) {
-                        UnityEngine.Debug.Log("match at => " + matches[i]);
-
                         var member = GetFromPosition(matches[i]);
 
                         if (member != null) {
@@ -94,8 +88,6 @@ namespace Match3
         /// <returns>Positions count</returns>
         public int DropFromTop (Vector position, Vector[] updated)
         {
-            UnityEngine.Debug.Log("drop at " + position);
-
             int x = position.X;
             int y = position.Y;
             int c = 0;
@@ -167,15 +159,12 @@ namespace Match3
                 bool matchOnThisPoint = Grid[rowIndex][x] != null && Grid[rowIndex][x + 1] != null && Grid[rowIndex][x].Avatar.Equals(Grid[rowIndex][x + 1].Avatar);
                 if (matchOnThisPoint) {
                     match++;
-                    UnityEngine.Debug.Log("total Match == " + match + " at row => " + rowIndex);
                 }
 
                 if (!matchOnThisPoint || x == xLength-2) {
-                    if (match >= minMatch) { // gather last match.
-                        UnityEngine.Debug.Log("found match len!");
-                        for (int i = matchStartPoint; i < match; i++) {
-                            UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cylinder).transform.position = new UnityEngine.Vector3(i, -rowIndex, 0);
-                            matches[counter++] = new Vector (i, rowIndex);
+                    if (match >= minMatch) {
+                        for (int i = 0; i < match; i++) {
+                            matches[counter++] = new Vector (matchStartPoint+i, rowIndex);
                         }
                     }
 

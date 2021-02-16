@@ -3,8 +3,8 @@ using Match3;
 using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
+
 #pragma warning disable CS0649
-    [SerializeField] private EffectPool effectPool;
     [SerializeField] private Transform holder;
     [SerializeField] private Renderer gridRenderer;
     [SerializeField] private int poolSize;
@@ -26,7 +26,6 @@ public class GameManager : MonoBehaviour {
 
     private void Start() {
         memberPool = new Pool(holder, gameSettings.Members, poolSize);
-        effectPool.Create(holder);
 
         gamePlayEvents.StartGame = CreateGame;
         gamePlayEvents.ClearGame = Clear;
@@ -116,9 +115,16 @@ public class GameManager : MonoBehaviour {
     }
 
     private void MemberPositionUpdate (ushort Id, int X, int Y) {
-        Debug.Log("Bubble position update => " + Id + " X=" + X + " Y=" + Y);
+        Debug.Log("Member position update => " + Id + " X=" + X + " Y=" + Y);
 
         if (spawneds.ContainsKey(Id)) {
+
+            spawneds[Id].SetClickAction(() => {
+                if (isGameInteractable) {
+                    currentSession.InteractMember(X, Y);
+                }
+            });
+
             animationQuery.AddToQuery(new AnimationQuery.MovementAction(spawneds[Id], X, Y));
         }
     }

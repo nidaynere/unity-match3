@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace Match3
 {
-    public class Match3Game : IDisposable
-    {
+    public class Match3Game : IDisposable {
         public Match3Events GameEvents;
 
         private Match3Grid map;
@@ -16,8 +15,7 @@ namespace Match3
         /// <param name="gridSizeX">x size of the grid</param>
         /// <param name="gridSizeY">y size of the grid</param>
         /// <param name="avatars">array of the avatars. match3 members will be randomized from this</param>
-        public Match3Game (int gridSizeX, int gridSizeY, string [] avatars, Action<ushort, string, int, int> Members)
-        {
+        public Match3Game (int gridSizeX, int gridSizeY, string [] avatars, Action<ushort, string, int, int> Members) {
             #region define
             map = new Match3Grid(new Vector (gridSizeX, gridSizeY), avatars);
             GameEvents = new Match3Events();
@@ -31,7 +29,6 @@ namespace Match3
             for (int y = 0; y < sizeY; y++) {
                 for (int x = 0; x < sizeX; x++) {
                     if (map.Grid[y][x] != null) {
-                        UnityEngine.Debug.Log("Spawn message => " + map.Grid[y][x].Avatar);
                         Members?.Invoke(map.Grid[y][x].Id, map.Grid[y][x].Avatar, x, y);
                     }
                 }
@@ -42,21 +39,18 @@ namespace Match3
             GC.SuppressFinalize(this);
         }
 
-
         public void InteractMember (int X, int Y) {
             var position = new Vector(X, Y);
             ushort id = map.RemoveFromPosition(position);
 
+            GameEvents.OnMemberDestroyed?.Invoke(id);
+
             Vector[] drops = new Vector[map.Size.Y];
             int dropCount = map.DropFromTop(position, drops);
             for (int i=0; i<dropCount; i++) {
-                UnityEngine.Debug.Log ("dropp! " + drops[i]);
                 GameEvents.OnMemberPositionUpdate?.Invoke(map.GetFromPosition(drops[i]).Id, drops[i].X, drops[i].Y);
             }
 
-            GameEvents.OnMemberDestroyed?.Invoke(id);
-
-            /*
             List<ushort> destroyed;
             List<ushort> moveds;
             List<Vector> newPositions;
@@ -77,7 +71,7 @@ namespace Match3
             if (dCount > 0) {
                 AddScore(dCount);
             }
-            */
+
             GameEvents.OnReadyForVisualization?.Invoke();
         }
 
@@ -86,5 +80,4 @@ namespace Match3
             GameEvents.OnGameScoreUpdate?.Invoke(userScore);
         }
     }
-
 }

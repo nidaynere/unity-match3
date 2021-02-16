@@ -30,20 +30,22 @@ namespace Match3
             }
 
             var destroyed = new List<ushort>();
-            var moved = new List<Vector>();
-            CheckMap(out destroyed, out moved);
+            var moveds = new List<ushort>();
+            var newPositions = new List<Vector>();
+
+            CheckMap(out destroyed, out moveds, out newPositions);
         }
 
         /// <summary>
         /// checks map and remove matches.
         /// </summary>
-        public void CheckMap (out List<ushort> destroyed, out List<Vector> moved) {
+        public void CheckMap (out List<ushort> destroyed, out List<ushort> moveds, out List<Vector> newPositions) {
             int sizeY = Size.Y;
             int sizeX = Size.X;
 
-            // id list.
             destroyed = new List<ushort>();
-            moved = new List<Vector>();
+            moveds = new List<ushort>();
+            newPositions = new List<Vector>();
 
             Vector[] matches = new Vector[sizeX];
 
@@ -65,9 +67,14 @@ namespace Match3
                         RemoveFromPosition(matches[i]);
 
                         // bring from top.
-                        for (int b = matches[i].Y; b > 0; b++) {
+                        for (int b = matches[i].Y; b > 0; b--) {
+                            if (grid[b - 1][matches[i].X] != null)
+                            {
+                                newPositions.Add(new Vector(matches[i].X, b));
+                                moveds.Add(grid[b][matches[i].X].Id);
+                            }
+
                             grid[b][matches[i].X] = grid[b - 1][matches[i].X];
-                            moved.Add(new Vector (matches[i].X, b));
                         }
                     }
                 }
@@ -106,18 +113,6 @@ namespace Match3
             }
 
             return grid[position.Y][position.X];
-        }
-
-
-        private void SlideMap (int step = 1)
-        {
-            for (int y = Size.Y - step -1 ; y >= 0; y--)
-            {
-                for (int x = 0; x < Size.X; x++)
-                {
-                    grid[y + step][x] = grid[y][x];
-                }
-            }
         }
 
         /// <summary>

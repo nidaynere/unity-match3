@@ -8,11 +8,12 @@
         public delegate void ReadyForVisualiation();
         public delegate void ScoreEvent(int Score);
 
-        public MemberSpawned OnBubbleSpawned;
-        public MemberPositionUpdate OnBubblePositionUpdate;
-        public MemberDestroyed OnBubbleExploded;
+        public MemberSpawned OnMemberSpawned;
+        public MemberPositionUpdate OnMemberPositionUpdate;
+        public MemberDestroyed OnMemberDestroyed;
         public ReadyForVisualiation OnReadyForVisualization;
         public ScoreEvent OnGameScoreUpdate;
+        public ScoreEvent OnGameFinished;
         #endregion
 
         #region inputs

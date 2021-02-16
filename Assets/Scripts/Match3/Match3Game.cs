@@ -32,25 +32,28 @@ namespace Match3
         }
 
 
-        public void InteractMember (int X, int Y)
-        {
+        public void InteractMember (int X, int Y) {
             map.RemoveFromPosition(new Vector(X, Y));
 
-            var destroyed = new List<ushort>();
-            var moved = new List<Vector>();
+            List<ushort> destroyed;
+            List<ushort> moveds;
+            List<Vector> newPositions;
 
-            map.CheckMap(out destroyed, out moved);
+            map.CheckMap(out destroyed, out moveds, out newPositions);
 
             int dCount = destroyed.Count;
-            int mCount = moved.Count;
+            int mCount = moveds.Count;
 
-            for (int i=0; i<dCount; i++) {
+            for (int i = 0; i < dCount; i++) {
+                GameEvents.OnMemberDestroyed (destroyed[i]);
+            }
 
+            for (int i = 0; i < mCount; i++) {
+                GameEvents.OnMemberPositionUpdate (moveds[i], newPositions[i].X, newPositions[i].Y);
             }
         }
 
-        private void AddScore(int multiplier)
-        {
+        private void AddScore(int multiplier) {
             userScore += (int)Math.Pow(2, multiplier);
             GameEvents.OnGameScoreUpdate?.Invoke(userScore);
         }

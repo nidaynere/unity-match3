@@ -60,6 +60,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  PositionUpdateSpeed: 17
-  ScaleUpdateSpeed: 20
-  AnimationDelay: 0.05
+  PositionUpdateSpeed: 14
+  ScaleUpdateSpeed: 14
+  AnimationDelay: 0.02

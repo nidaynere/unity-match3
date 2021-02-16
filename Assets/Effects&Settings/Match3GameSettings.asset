@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea1d910ff7ee84e4883d51ccf85f0a98, type: 3}
   m_Name: Match3GameSettings
   m_EditorClassIdentifier: 
-  GridSizeX: 8
-  GridSizeY: 8
+  GridSizeX: 11
+  GridSizeY: 11
   Members:
   - {fileID: 4325493741197658156, guid: 97e6f3330b49f604989e93c9741d8f6f, type: 3}
   - {fileID: 1803150716510910832, guid: b6495e4e3eaf26e4eb510dc38d05a7f6, type: 3}

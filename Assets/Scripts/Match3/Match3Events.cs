@@ -11,7 +11,6 @@
         public MemberDestroyed OnMemberDestroyed;
         public ReadyForVisualiation OnReadyForVisualization;
         public ScoreEvent OnGameScoreUpdate;
-        public ScoreEvent OnGameFinished;
         #endregion
 
         #region inputs

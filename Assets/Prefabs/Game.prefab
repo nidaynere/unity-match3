@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 481875672938485680}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.5, y: 5.04, z: 5}
+  m_LocalPosition: {x: -4.6, y: 5.04, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2399247291984157282}
@@ -57,7 +57,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2399247291984157343}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.5, y: -3.5, z: 0.01}
+  m_LocalPosition: {x: 2.5, y: -4, z: 0.01}
   m_LocalScale: {x: 6, y: 8, z: 1}
   m_Children: []
   m_Father: {fileID: 481875672938485683}
@@ -121,7 +121,7 @@ GameObject:
   - component: {fileID: 3389674638028203261}
   - component: {fileID: 3389674638028203260}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: Game
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -156,8 +156,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   holder: {fileID: 481875672938485683}
   gridRenderer: {fileID: 2399247291984157280}
-  poolSize: 100
   gamePlayEvents: {fileID: 11400000, guid: fdd2dc90e8207ff41be47a02868202d1, type: 2}
   animationSettings: {fileID: 11400000, guid: a83af7336ad93a44cafe37345ee10404, type: 2}
   gameSettings: {fileID: 11400000, guid: 6a02ee70ed8b280499273bd071d0bed8, type: 2}
-  gridPointer: {fileID: 0}

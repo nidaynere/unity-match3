@@ -2,36 +2,34 @@
 using System;
 using UnityEngine.EventSystems;
 
-public class GameMember : Transition, IPointerClickHandler
-{
+public class GameMember : Transition, IPointerClickHandler {
     private Action onClick;
 
-    public void SetClickAction(Action onClick)
-    {
+    public void SetClickAction(Action onClick) {
         this.onClick = onClick;
     }
 
-    public void SetPosition(int X, int Y)
-    {
+    public void SetPosition(int X, int Y) {
         transform.localPosition = new Vector3(X, -Y);
     }
 
-    public void SetTransition (int X, int Y, Action onCompleted = null)
-    {
+    public void SetTransition (int X, int Y, Action onCompleted = null) {
         var tPos = transform.parent.TransformPoint (new Vector3(X, -Y));
 
         Move(tPos, animationSettings.PositionUpdateSpeed, onCompleted);
     }
 
-    public void Kill(Action onCompleted)
-    {
+    public void Kill(Action onCompleted) {
         onClick = null;
 
-        Scale(Vector3.zero, animationSettings.ScaleUpdateSpeed,  () => { onCompleted?.Invoke(); /*gameObject.SetActive(false);*/ });
+        Scale(Vector3.zero, animationSettings.ScaleUpdateSpeed, 
+            () => { 
+                onCompleted?.Invoke(); 
+                gameObject.SetActive(false); 
+            });
     }
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
+    public void OnPointerClick(PointerEventData eventData) {
         onClick?.Invoke();
     }
 }

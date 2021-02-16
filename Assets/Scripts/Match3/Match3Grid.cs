@@ -7,10 +7,10 @@ namespace Match3
     /// a grid that holds the whole game.
     /// </summary>
     public struct Match3Grid {
-        private ushort minMatch;
+        public readonly Match3Member[][] Grid;
+        public readonly Vector Size;
 
-        public Match3Member[][] Grid;
-        public Vector Size;
+        private readonly ushort minMatch;
 
         public Match3Grid(ushort minMatch, Vector gridSize, string [] avatars) {
             this.minMatch = minMatch;
@@ -90,8 +90,7 @@ namespace Match3
         /// <param name="position">Positions to be dropped to</param>
         /// <param name="updated">Dropped positions. Put an array with Y length of the map</param>
         /// <returns>Positions count</returns>
-        public int DropFromTop (Vector position, Vector[] updated)
-        {
+        public int DropFromTop (Vector position, Vector[] updated) {
             int x = position.X;
             int y = position.Y;
             int c = 0;
@@ -160,7 +159,6 @@ namespace Match3
             int match = 1;
 
             for (int x = 0; x < xLength - 1; x++) {
-
                 bool matchOnThisPoint = Grid[rowIndex][x] != null && Grid[rowIndex][x + 1] != null && Grid[rowIndex][x].Avatar.Equals(Grid[rowIndex][x + 1].Avatar);
 
                 if (matchOnThisPoint) {
@@ -169,7 +167,6 @@ namespace Match3
 
                 if (!matchOnThisPoint || x == xLength-2) {
                     if (match >= minMatch) {
-
                         for (int i = 0; i < match; i++) {
                             matches[counter++] = new Vector (matchStartPoint+i, rowIndex);
                         }

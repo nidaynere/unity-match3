@@ -17,7 +17,7 @@ public class Match3GameSettings : ScriptableObject {
     [Tooltip ("How many pool will be generated for per member?")]
     public ushort PoolSize = 100;
 
-    public string[] GetMembersAsString() {
+    private string[] GetMembersAsString() {
         int length = Members.Length;
 
         string[] membersAsString = new string[length];
@@ -26,5 +26,20 @@ public class Match3GameSettings : ScriptableObject {
         }
 
         return membersAsString;
+    }
+
+    public bool ValidateMembers (out string [] memberIds) {
+        memberIds = GetMembersAsString();
+
+        for (int i = 0, length = memberIds.Length; i < length; i++) {
+            for (int e = i-1; e >= 0; e--) {
+                if (memberIds[i].Equals(memberIds[e])) {
+                    Debug.LogError("Members have conflict. Member prefab names used as unique identifiers. There is a conflict in the given members array. Conflict name => " + memberIds[i]);
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

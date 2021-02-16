@@ -3,33 +3,34 @@ using System.Collections.Generic;
 
 namespace Match3
 {
+    /// <summary>
+    /// Match3 game manager class.
+    /// Creates grid, sends outputs, and receive the game input.
+    /// </summary>
     public class Match3Game : IDisposable {
-        public Match3Events GameEvents;
+        public readonly Match3Events GameEvents;
+        private readonly Match3Grid map;
 
-        private Match3Grid map;
         private int userScore;
 
         /// <summary>
         /// Creates a match 3 game.
         /// </summary>
+        /// <param name="minMatch">how many match required in a row to MATCH3? 3? :D</param>
         /// <param name="gridSizeX">x size of the grid</param>
         /// <param name="gridSizeY">y size of the grid</param>
         /// <param name="avatars">array of the avatars. match3 members will be randomized from this</param>
-        public Match3Game (ushort minMatch, int gridSizeX, int gridSizeY, string [] avatars, Action<ushort, string, int, int> Members) {
-            #region define
+        /// <param name="members">spawned members. id, avatar, x position, y position</param>
+        public Match3Game (ushort minMatch, int gridSizeX, int gridSizeY, string [] avatars, Action<ushort, string, int, int> members) {
             map = new Match3Grid(minMatch, new Vector (gridSizeX, gridSizeY), avatars);
             GameEvents = new Match3Events();
-            #endregion
 
             GameEvents.OnInteractMember += InteractMember;
 
-            int sizeX = map.Size.X;
-            int sizeY = map.Size.Y;
-
-            for (int y = 0; y < sizeY; y++) {
-                for (int x = 0; x < sizeX; x++) {
+            for (int y = 0, sizeY = map.Size.Y; y < sizeY; y++) {
+                for (int x = 0, sizeX = map.Size.X; x < sizeX; x++) {
                     if (map.Grid[y][x] != null) {
-                        Members?.Invoke(map.Grid[y][x].Id, map.Grid[y][x].Avatar, x, y);
+                        members?.Invoke(map.Grid[y][x].Id, map.Grid[y][x].Avatar, x, y);
                     }
                 }
             }
@@ -66,7 +67,7 @@ namespace Match3
         }
 
         private void AddScore(int multiplier) {
-            userScore += (int)Math.Pow(2, multiplier);
+            userScore += (int)Math.Pow(1.2, multiplier);
             GameEvents.OnGameScoreUpdate?.Invoke(userScore);
         }
     }

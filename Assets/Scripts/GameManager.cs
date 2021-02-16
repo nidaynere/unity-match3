@@ -18,11 +18,18 @@ public class GameManager : MonoBehaviour {
     private AnimationQuery animationQuery;
 
     /// <summary>
-    /// Current status of the game. Is playable, or waiting for something?
+    /// Current status of the game. Is playable currently, or waiting for animation?
     /// </summary>
     private bool isGameInteractable;
 
+    private string[] memberIds;
+
     private void Start() {
+        if (!gameSettings.ValidateMembers(out memberIds)) {
+            Debug.LogError("Game is not initialized.");
+            return;
+        }
+
         memberPool = new Pool(holder, gameSettings.Members, gameSettings.PoolSize);
 
         gamePlayEvents.StartGame = CreateGame;
@@ -31,14 +38,19 @@ public class GameManager : MonoBehaviour {
     }
 
     private void CreateGame() {
+        if (memberIds == null) {
+            return;
+        }
+
         Clear();
 
         animationQuery = new AnimationQuery(animationSettings);
+
         currentSession = new Match3Game(
                 gameSettings.RequiredMatch,
                 gameSettings.GridSizeX,
                 gameSettings.GridSizeY,
-                gameSettings.GetMembersAsString(),
+                memberIds,
                 SpawnBall
             );
 
@@ -53,11 +65,6 @@ public class GameManager : MonoBehaviour {
 
         // Match3<-->GamePlayEvents
         currentSession.GameEvents.OnGameScoreUpdate += (int value) => { gamePlayEvents.OnScoreUpdate?.Invoke(value); };
-        currentSession.GameEvents.OnGameFinished += (int value) => {
-            Debug.Log("OnGameFinished()");
-            gamePlayEvents.OnGameplayStatusChange?.Invoke(false);
-            gamePlayEvents.OnGameOver?.Invoke(value); 
-        };
         //
 
         gamePlayEvents.OnGameStarted?.Invoke();
@@ -65,9 +72,6 @@ public class GameManager : MonoBehaviour {
         gamePlayEvents.OnGameplayStatusChange?.Invoke(true);
     }
 
-    /// <summary>
-    /// Clears the game.
-    /// </summary>
     private void Clear() {
         if (currentSession != null) {
             StopAllCoroutines();
@@ -80,7 +84,6 @@ public class GameManager : MonoBehaviour {
     }
 
     private void SpawnBall(ushort Id, string Avatar, int X, int Y) {
-        Debug.Log("Spawnball with Id => " + Id);
         var gameBall = memberPool.GetFromPool(Avatar);
         gameBall.gameObject.name = Id.ToString();
 
@@ -99,17 +102,12 @@ public class GameManager : MonoBehaviour {
     }
 
     private void ReadyForVisualization() {
-        Debug.Log("Ready for visualization.");
         StartCoroutine(animationQuery.DoQuery(() => {
-            Debug.Log("Visualization completed.");
-
             gamePlayEvents.OnGameplayStatusChange?.Invoke(true);
-            Debug.Log("next round !!");
         }));
     }
 
     private void MemberDestroyed (ushort Id) {
-        Debug.Log("Member destoyed " + Id);
         if (spawneds.ContainsKey(Id)) {
             animationQuery.AddToQuery(new AnimationQuery.DestroyAction(spawneds[Id]));
             spawneds.Remove(Id);
@@ -117,8 +115,6 @@ public class GameManager : MonoBehaviour {
     }
 
     private void MemberPositionUpdate (ushort Id, int X, int Y) {
-        Debug.Log("Member position update => " + Id + " X=" + X + " Y=" + Y);
-
         if (spawneds.ContainsKey(Id)) {
 
             spawneds[Id].SetClickAction(() => {

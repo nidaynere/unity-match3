@@ -9,7 +9,7 @@
         /// <summary>
         /// Face of the member. Used for matching and visualization.
         /// </summary>
-        public string Avatar;
+        public readonly string Avatar;
 
         public Match3Member(ushort Id, string Avatar) {
             this.Id = Id;

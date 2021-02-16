@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Pool
-{
+public class Pool {
     private Dictionary<string, PoolMember> poolMembers;
 
     public Pool (Transform holder, GameMember[] poolObjects, int poolSize) {
@@ -22,19 +21,16 @@ public class Pool
         return null;
     }
 
-    public class PoolMember
-    {
+    public class PoolMember {
         private GameMember[] poolObjects;
         private int currentStep;
         private int size;
 
-        public PoolMember(Transform holder, GameMember poolObject, int poolSize)
-        {
+        public PoolMember(Transform holder, GameMember poolObject, int poolSize) {
             size = poolSize;
             poolObjects = new GameMember[poolSize];
 
-            for (int i = 0; i < poolSize; i++)
-            {
+            for (int i = 0; i < poolSize; i++) {
                 poolObjects[i] = Object.Instantiate(poolObject, holder);
                 poolObjects[i].gameObject.SetActive(false);
             }
@@ -42,28 +38,25 @@ public class Pool
             currentStep = 0;
         }
 
-        public void Dispose()
-        {
-            for (int i = 0; i < size; i++)
-            {
+        public void Dispose() {
+            for (int i = 0; i < size; i++) {
                 Object.Destroy(poolObjects[i].gameObject);
             }
 
             poolObjects = null;
         }
 
-        public GameMember Get()
-        {
+        public GameMember Get() {
             var target = poolObjects[currentStep];
-            if (++currentStep >= size)
+            if (++currentStep >= size) {
                 currentStep = 0;
+            }
+
             return target;
         }
 
-        public void Reset()
-        {
-            for (int i = 0; i < size; i++)
-            {
+        public void Reset() {
+            for (int i = 0; i < size; i++) {
                 poolObjects[i].gameObject.SetActive(false);
             }
 

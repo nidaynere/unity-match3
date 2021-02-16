@@ -83,12 +83,13 @@ public class GameManager : MonoBehaviour {
 
     private void SpawnBall(ushort Id, string Avatar, int X, int Y) {
         var gameBall = memberPool.GetFromPool(Avatar);
-        gameBall.SetClickAction( () => {
-            if (isGameInteractable)
-            {
+        gameBall.gameObject.name = Id.ToString();
+
+        gameBall.SetClickAction(() => {
+            if (isGameInteractable) {
                 currentSession.InteractMember(X, Y);
             }
-        } );
+        });
 
         gameBall.SetPosition(X, Y);
         gameBall.gameObject.SetActive(true);

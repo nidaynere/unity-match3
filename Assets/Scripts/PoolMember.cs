@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public struct Pool
+public class Pool
 {
     private Dictionary<string, PoolMember> poolMembers;
 
@@ -22,7 +22,7 @@ public struct Pool
         return null;
     }
 
-    public struct PoolMember
+    public class PoolMember
     {
         private GameMember[] poolObjects;
         private int currentStep;
@@ -57,7 +57,6 @@ public struct Pool
             var target = poolObjects[currentStep];
             if (++currentStep >= size)
                 currentStep = 0;
-
             return target;
         }
 

@@ -23,8 +23,8 @@ namespace Match3
             for (int y = 0; y < Size.Y; y++) {
                 Grid[y] = new Match3Member[sizeX];
 
-                for (int i=0; i<sizeX; i++) {
-                    Grid[y][i] = new Match3Member(idCounter, avatars[Random.Range(0, avatarsLength)]);
+                for (int x=0; x<sizeX; x++) {
+                    Grid[y][x] = new Match3Member(idCounter, avatars[Random.Range(0, avatarsLength)]);
                     idCounter++;
                 }
             }
@@ -49,9 +49,14 @@ namespace Match3
 
             Vector[] matches = new Vector[sizeX];
 
-            for (int y = sizeY - 1; y > 0; y--) {
-                while (true) {
+            for (int y = sizeY - 1; y >= 0; y--) {
+                int protection = 1000;
+                while (protection > 0) {
+                    protection--;
+
                     int matchCount = GetMatchesAtRow(y, ref matches);
+
+                    UnityEngine.Debug.Log("match count at row => " + y + ", = " + matchCount);
                     if (matchCount == 0) {
                         break;
                     }
@@ -133,8 +138,10 @@ namespace Match3
             int match = 1;
 
             for (int x = 0; x < xLength - 1; x++) {
-                if (Grid[rowIndex][x] != null && Grid[rowIndex][x].Id.Equals(Grid[rowIndex][x].Id)) {
+                UnityEngine.Debug.Log("checking for => " + Grid[rowIndex][x].Id);
+                if (Grid[rowIndex][x] != null && Grid[rowIndex][x].Avatar.Equals(Grid[rowIndex][x+1].Avatar)) {
                     match++;
+                    UnityEngine.Debug.Log("total Match == " + match);
                 }
                 else {// no match.
                     if (match >= minMatch) { // gather last match.

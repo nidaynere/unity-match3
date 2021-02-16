@@ -44,10 +44,19 @@ namespace Match3
 
 
         public void InteractMember (int X, int Y) {
-            ushort id = map.RemoveFromPosition(new Vector(X, Y));
+            var position = new Vector(X, Y);
+            ushort id = map.RemoveFromPosition(position);
+
+            Vector[] drops = new Vector[map.Size.Y];
+            int dropCount = map.DropFromTop(position, drops);
+            for (int i=0; i<dropCount; i++) {
+                UnityEngine.Debug.Log ("dropp! " + drops[i]);
+                GameEvents.OnMemberPositionUpdate?.Invoke(map.GetFromPosition(drops[i]).Id, drops[i].X, drops[i].Y);
+            }
 
             GameEvents.OnMemberDestroyed?.Invoke(id);
 
+            /*
             List<ushort> destroyed;
             List<ushort> moveds;
             List<Vector> newPositions;
@@ -68,7 +77,7 @@ namespace Match3
             if (dCount > 0) {
                 AddScore(dCount);
             }
-
+            */
             GameEvents.OnReadyForVisualization?.Invoke();
         }
 

@@ -47,6 +47,7 @@ namespace Match3
             moveds = new List<ushort>();
             newPositions = new List<Vector>();
 
+            Vector[] drops = new Vector[sizeY];
             Vector[] matches = new Vector[sizeX];
 
             for (int y = sizeY - 1; y >= 0; y--) {
@@ -63,7 +64,6 @@ namespace Match3
                         break;
                     }
 
-                    // clear all.
                     for (int i=0; i<matchCount; i++) {
                         UnityEngine.Debug.Log("match at => " + matches[i]);
 
@@ -74,23 +74,46 @@ namespace Match3
                         }
 
                         RemoveFromPosition(matches[i]);
+                        
+                        int count = DropFromTop(matches[i], drops);
+
+                        for (int d = 0; d < count; d++) {
+                            moveds.Add (GetFromPosition(drops[d]).Id);
+                            newPositions.Add(drops[d]);
+                        }
                     }
                 }
             }
+        }
 
-            // TODO BRING FROM TOP.
-            // bring from top.
-            for (int b = matches[i].Y; b > 0; b--)
+        /// <summary>
+        /// Drops vectors to the given position.
+        /// </summary>
+        /// <param name="position">Positions to be dropped to</param>
+        /// <param name="updated">Dropped positions. Put an array with Y length of the map</param>
+        /// <returns>Positions count</returns>
+        public int DropFromTop (Vector position, Vector[] updated)
+        {
+            UnityEngine.Debug.Log("drop at " + position);
+
+            int x = position.X;
+            int y = position.Y;
+            int c = 0;
+
+            for (int b = y; b > 0; b--)
             {
-                if (Grid[b - 1][matches[i].X] != null)
+                if (Grid[b - 1][x] != null)
                 {
-                    newPositions.Add(new Vector(matches[i].X, b));
-                    moveds.Add(Grid[b - 1][matches[i].X].Id);
-                }
+                    updated[c] = new Vector(x, b);
 
-                Grid[b][matches[i].X] = Grid[b - 1][matches[i].X];
-                Grid[b - 1][matches[i].X] = null;
+                    Grid[b][x] = Grid[b-1][x];
+                    Grid[b - 1][x] = null;
+
+                    c++;
+                }
             }
+
+            return c;
         }
 
         public ushort RemoveFromPosition(Vector position) {
@@ -111,7 +134,7 @@ namespace Match3
             return id;
         }
 
-        private Match3Member GetFromPosition (Vector position) {
+        public Match3Member GetFromPosition (Vector position) {
             if (position.Y < 0 || position.Y >= Size.Y) {
                 return null;
             }

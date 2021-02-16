@@ -2,7 +2,7 @@
 
 [CreateAssetMenu(fileName = "Match3GameSettings", menuName = "Create Match3 Game Settings", order = 1)]
 public class Match3GameSettings : ScriptableObject {
-    [Tooltip ("X size of the grid")]
+    [Tooltip("X size of the grid")]
     public int GridSizeX;
 
     [Tooltip("Y size of the grid")]
@@ -10,6 +10,12 @@ public class Match3GameSettings : ScriptableObject {
 
     [Tooltip("Members of the game")]
     public GameMember[] Members;
+
+    [Tooltip("How many horizontal match required?")]
+    public ushort RequiredMatch = 3;
+
+    [Tooltip ("How many pool will be generated for per member?")]
+    public ushort PoolSize = 100;
 
     public string[] GetMembersAsString() {
         int length = Members.Length;

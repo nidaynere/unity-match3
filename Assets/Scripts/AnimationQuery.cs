@@ -23,11 +23,9 @@ public struct AnimationQuery
     {
         if (Query.Count == 0)
         {
-            Debug.Log("[CombineAnimationQuery->DoQuery => Query is empty!");
             yield break;
         }
 
-        Debug.Log("DoQuery");
         bool isPlaying = false;
         while (true)
         {
@@ -38,18 +36,13 @@ public struct AnimationQuery
 
             if (Query.Count == 0)
             {// Done
-                Debug.Log("Animation query => completed.");
-
                 onCompleted?.Invoke();
                 yield break;
             }
 
             isPlaying = true;
 
-            Debug.Log("Animation query => started anim.");
-
             Query[0].Trigger(gameSettings, () => {
-                Debug.Log("Animation query => finished anim.");
                 isPlaying = false;
             });
 
@@ -98,8 +91,7 @@ public struct AnimationQuery
 
         public override void Trigger(AnimationSettings gameSettings, Action onCompleted)
         {
-            gameMember.Kill();
-            onCompleted?.Invoke();
+            gameMember.Kill(onCompleted);
         }
     }
 }

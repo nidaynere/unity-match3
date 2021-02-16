@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea1d910ff7ee84e4883d51ccf85f0a98, type: 3}
   m_Name: Match3GameSettings
   m_EditorClassIdentifier: 
-  GridSizeX: 5
-  GridSizeY: 5
+  GridSizeX: 8
+  GridSizeY: 8
   Members:
   - {fileID: 4325493741197658156, guid: 97e6f3330b49f604989e93c9741d8f6f, type: 3}
   - {fileID: 1803150716510910832, guid: b6495e4e3eaf26e4eb510dc38d05a7f6, type: 3}
   - {fileID: 7550545547313249838, guid: 9c495c49f6a7def4aba8e8c7496a9890, type: 3}
   - {fileID: 2878418283173586282, guid: f34f04745637b1f4686e310971cd934a, type: 3}
+  RequiredMatch: 3
+  PoolSize: 100

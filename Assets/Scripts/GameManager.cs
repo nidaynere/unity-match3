@@ -1,17 +1,15 @@
 ﻿using UnityEngine;
 using Match3;
 using System.Collections.Generic;
+using System.Linq;
 
 public class GameManager : MonoBehaviour {
-
 #pragma warning disable CS0649
     [SerializeField] private Transform holder;
     [SerializeField] private Renderer gridRenderer;
-    [SerializeField] private int poolSize;
     [SerializeField] private GamePlayEvents gamePlayEvents;
     [SerializeField] private AnimationSettings animationSettings;
     [SerializeField] private Match3GameSettings gameSettings;
-    [SerializeField] private Transform gridPointer;
 #pragma warning restore CS0649
 
     private Dictionary<ushort, GameMember> spawneds = new Dictionary<ushort, GameMember>();
@@ -25,7 +23,7 @@ public class GameManager : MonoBehaviour {
     private bool isGameInteractable;
 
     private void Start() {
-        memberPool = new Pool(holder, gameSettings.Members, poolSize);
+        memberPool = new Pool(holder, gameSettings.Members, gameSettings.PoolSize);
 
         gamePlayEvents.StartGame = CreateGame;
         gamePlayEvents.ClearGame = Clear;
@@ -37,6 +35,7 @@ public class GameManager : MonoBehaviour {
 
         animationQuery = new AnimationQuery(animationSettings);
         currentSession = new Match3Game(
+                gameSettings.RequiredMatch,
                 gameSettings.GridSizeX,
                 gameSettings.GridSizeY,
                 gameSettings.GetMembersAsString(),
@@ -82,9 +81,10 @@ public class GameManager : MonoBehaviour {
 
     private void SpawnBall(ushort Id, string Avatar, int X, int Y) {
         Debug.Log("Spawnball with Id => " + Id);
-
         var gameBall = memberPool.GetFromPool(Avatar);
         gameBall.gameObject.name = Id.ToString();
+
+        gameBall.transform.localScale = Vector3.one;
 
         gameBall.SetClickAction(() => {
             if (isGameInteractable) {
@@ -112,6 +112,7 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Member destoyed " + Id);
         if (spawneds.ContainsKey(Id)) {
             animationQuery.AddToQuery(new AnimationQuery.DestroyAction(spawneds[Id]));
+            spawneds.Remove(Id);
         }
     }
 

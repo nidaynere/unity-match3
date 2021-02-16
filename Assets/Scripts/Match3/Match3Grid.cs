@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace Match3
 {
@@ -6,17 +7,19 @@ namespace Match3
     /// a grid that holds the whole game.
     /// </summary>
     public struct Match3Grid {
-        private const ushort minMatch = 3;
+        private ushort minMatch;
 
         public Match3Member[][] Grid;
         public Vector Size;
 
-        public Match3Grid(Vector GridSize, string [] avatars) {
-            Size = GridSize;
+        public Match3Grid(ushort minMatch, Vector gridSize, string [] avatars) {
+            this.minMatch = minMatch;
+
+            Size = gridSize;
 
             ushort idCounter = 0;
 
-            int sizeX = GridSize.X;
+            int sizeX = gridSize.X;
             int avatarsLength = avatars.Length;
 
             Grid = new Match3Member[Size.Y][];
@@ -29,51 +32,52 @@ namespace Match3
                 }
             }
 
-            var destroyed = new List<ushort>();
-            var moveds = new List<ushort>();
-            var newPositions = new List<Vector>();
-            // Dear reviewer, Sorry for this :((
-
-            CheckMap(out destroyed, out moveds, out newPositions);
+            CheckMap();
         }
 
         /// <summary>
         /// checks map and remove matches.
         /// </summary>
-        public void CheckMap (out List<ushort> destroyed, out List<ushort> moveds, out List<Vector> newPositions) {
+        public void CheckMap (Action<ushort> onDestroyed = null, Action <ushort, Vector> onMoved = null) {
             int sizeY = Size.Y;
             int sizeX = Size.X;
-
-            destroyed = new List<ushort>();
-            moveds = new List<ushort>();
-            newPositions = new List<Vector>();
 
             Vector[] drops = new Vector[sizeY];
             Vector[] matches = new Vector[sizeX];
 
             for (int y = sizeY - 1; y >= 0; y--) {
-                while (true) {
-
+                while (true)
+                {
                     int matchCount = GetMatchesAtRow(y, ref matches);
 
-                    if (matchCount == 0) {
+                    if (matchCount == 0)
+                    {
                         break;
                     }
 
-                    for (int i=0; i<matchCount; i++) {
+                    // everything is in order, do the kills first.
+                    for (int i = 0; i < matchCount; i++)
+                    {
+                        UnityEngine.Debug.Assert(matches[i].Y == y);
+
                         var member = GetFromPosition(matches[i]);
 
-                        if (member != null) {
-                            destroyed.Add(GetFromPosition(matches[i]).Id);
-                        }
+                        if (member != null)
+                        {
+                            onDestroyed?.Invoke(member.Id);
 
-                        RemoveFromPosition(matches[i]);
-                        
+                            RemoveFromPosition(matches[i]);
+                        }
+                    }
+
+                    // everything is in order. do the drops now.
+                    for (int i = 0; i < matchCount; i++)
+                    {
                         int count = DropFromTop(matches[i], drops);
 
-                        for (int d = 0; d < count; d++) {
-                            moveds.Add (GetFromPosition(drops[d]).Id);
-                            newPositions.Add(drops[d]);
+                        for (int d = 0; d < count; d++)
+                        {
+                            onMoved?.Invoke(GetFromPosition(drops[d]).Id, drops[d]);
                         }
                     }
                 }
@@ -156,13 +160,16 @@ namespace Match3
             int match = 1;
 
             for (int x = 0; x < xLength - 1; x++) {
+
                 bool matchOnThisPoint = Grid[rowIndex][x] != null && Grid[rowIndex][x + 1] != null && Grid[rowIndex][x].Avatar.Equals(Grid[rowIndex][x + 1].Avatar);
+
                 if (matchOnThisPoint) {
                     match++;
                 }
 
                 if (!matchOnThisPoint || x == xLength-2) {
                     if (match >= minMatch) {
+
                         for (int i = 0; i < match; i++) {
                             matches[counter++] = new Vector (matchStartPoint+i, rowIndex);
                         }

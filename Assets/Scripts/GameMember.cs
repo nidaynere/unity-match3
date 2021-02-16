@@ -23,9 +23,11 @@ public class GameMember : Transition, IPointerClickHandler
         Move(tPos, animationSettings.PositionUpdateSpeed, onCompleted);
     }
 
-    public void Kill()
+    public void Kill(Action onCompleted)
     {
-        Scale(Vector3.zero, animationSettings.ScaleUpdateSpeed,  () => { gameObject.SetActive(false); });
+        onClick = null;
+
+        Scale(Vector3.zero, animationSettings.ScaleUpdateSpeed,  () => { onCompleted?.Invoke(); /*gameObject.SetActive(false);*/ });
     }
 
     public void OnPointerClick(PointerEventData eventData)

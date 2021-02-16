@@ -15,9 +15,9 @@ namespace Match3
         /// <param name="gridSizeX">x size of the grid</param>
         /// <param name="gridSizeY">y size of the grid</param>
         /// <param name="avatars">array of the avatars. match3 members will be randomized from this</param>
-        public Match3Game (int gridSizeX, int gridSizeY, string [] avatars, Action<ushort, string, int, int> Members) {
+        public Match3Game (ushort minMatch, int gridSizeX, int gridSizeY, string [] avatars, Action<ushort, string, int, int> Members) {
             #region define
-            map = new Match3Grid(new Vector (gridSizeX, gridSizeY), avatars);
+            map = new Match3Grid(minMatch, new Vector (gridSizeX, gridSizeY), avatars);
             GameEvents = new Match3Events();
             #endregion
 
@@ -51,26 +51,16 @@ namespace Match3
                 GameEvents.OnMemberPositionUpdate?.Invoke(map.GetFromPosition(drops[i]).Id, drops[i].X, drops[i].Y);
             }
 
-            List<ushort> destroyed;
-            List<ushort> moveds;
-            List<Vector> newPositions;
+            int total = 0;
+            map.CheckMap(
+                    (ushort _id) => {
+                        GameEvents.OnMemberDestroyed(_id);
+                    }, (ushort _id, Vector _position) => {
+                        GameEvents.OnMemberPositionUpdate(_id, _position.X, _position.Y);
+                        total++;
+                    });
 
-            map.CheckMap(out destroyed, out moveds, out newPositions);
-
-            int dCount = destroyed.Count;
-            int mCount = moveds.Count;
-
-            for (int i = 0; i < dCount; i++) {
-                GameEvents.OnMemberDestroyed (destroyed[i]);
-            }
-
-            for (int i = 0; i < mCount; i++) {
-                GameEvents.OnMemberPositionUpdate (moveds[i], newPositions[i].X, newPositions[i].Y);
-            }
-
-            if (dCount > 0) {
-                AddScore(dCount);
-            }
+            AddScore(total);
 
             GameEvents.OnReadyForVisualization?.Invoke();
         }

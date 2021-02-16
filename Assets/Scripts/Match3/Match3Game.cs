@@ -16,7 +16,7 @@ namespace Match3
         /// <param name="gridSizeX">x size of the grid</param>
         /// <param name="gridSizeY">y size of the grid</param>
         /// <param name="avatars">array of the avatars. match3 members will be randomized from this</param>
-        public Match3Game (int gridSizeX, int gridSizeY, string [] avatars)
+        public Match3Game (int gridSizeX, int gridSizeY, string [] avatars, Action<ushort, string, int, int> Members)
         {
             #region define
             map = new Match3Grid(new Vector (gridSizeX, gridSizeY), avatars);
@@ -24,10 +24,18 @@ namespace Match3
             #endregion
 
             GameEvents.OnInteractMember += InteractMember;
+
+            int sizeX = map.Size.X;
+            int sizeY = map.Size.Y;
+
+            for (int y = 0; y < sizeY; y++) {
+                for (int x = 0; x < sizeX; x++) {
+                    Members?.Invoke(map.Grid[y][x].Id, map.Grid[y][x].Avatar, x, y);
+                }
+            }
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             GC.SuppressFinalize(this);
         }
 
@@ -51,6 +59,12 @@ namespace Match3
             for (int i = 0; i < mCount; i++) {
                 GameEvents.OnMemberPositionUpdate (moveds[i], newPositions[i].X, newPositions[i].Y);
             }
+
+            if (dCount > 0) {
+                AddScore(dCount);
+            }
+
+            GameEvents.OnReadyForVisualization?.Invoke();
         }
 
         private void AddScore(int multiplier) {

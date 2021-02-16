@@ -8,8 +8,8 @@ namespace Match3
     public struct Match3Grid {
         private const ushort minMatch = 3;
 
-        private Match3Member[][] grid;
-        private Vector Size;
+        public Match3Member[][] Grid;
+        public Vector Size;
 
         public Match3Grid(Vector GridSize, string [] avatars) {
             Size = GridSize;
@@ -19,12 +19,12 @@ namespace Match3
             int sizeX = GridSize.X;
             int avatarsLength = avatars.Length;
             // define grid.
-            grid = new Match3Member[Size.Y][];
+            Grid = new Match3Member[Size.Y][];
             for (int y = 0; y < Size.Y; y++) {
-                grid[y] = new Match3Member[sizeX];
+                Grid[y] = new Match3Member[sizeX];
 
                 for (int i=0; i<sizeX; i++) {
-                    grid[y][i] = new Match3Member(idCounter, avatars[Random.Range(0, avatarsLength)]);
+                    Grid[y][i] = new Match3Member(idCounter, avatars[Random.Range(0, avatarsLength)]);
                     idCounter++;
                 }
             }
@@ -68,13 +68,13 @@ namespace Match3
 
                         // bring from top.
                         for (int b = matches[i].Y; b > 0; b--) {
-                            if (grid[b - 1][matches[i].X] != null)
+                            if (Grid[b - 1][matches[i].X] != null)
                             {
                                 newPositions.Add(new Vector(matches[i].X, b));
-                                moveds.Add(grid[b][matches[i].X].Id);
+                                moveds.Add(Grid[b][matches[i].X].Id);
                             }
 
-                            grid[b][matches[i].X] = grid[b - 1][matches[i].X];
+                            Grid[b][matches[i].X] = Grid[b - 1][matches[i].X];
                         }
                     }
                 }
@@ -93,12 +93,12 @@ namespace Match3
                 return false;
             }
 
-            if (grid[position.Y][position.X] == null)
+            if (Grid[position.Y][position.X] == null)
             {
                 return false;
             }
 
-            grid[position.Y][position.X] = null;
+            Grid[position.Y][position.X] = null;
 
             return true;
         }
@@ -112,7 +112,7 @@ namespace Match3
                 return null;
             }
 
-            return grid[position.Y][position.X];
+            return Grid[position.Y][position.X];
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Match3
             int match = 1;
 
             for (int x = 0; x < xLength - 1; x++) {
-                if (grid[rowIndex][x] != null && grid[rowIndex][x].Id.Equals(grid[rowIndex][x].Id)) {
+                if (Grid[rowIndex][x] != null && Grid[rowIndex][x].Id.Equals(Grid[rowIndex][x].Id)) {
                     match++;
                 }
                 else {// no match.

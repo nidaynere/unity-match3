@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour {
 
         gameBall.SetClickAction(() => {
             if (isGameInteractable) {
+                gamePlayEvents.OnGameplayStatusChange?.Invoke(false);
                 currentSession.InteractMember(X, Y);
             }
         });
@@ -121,6 +122,7 @@ public class GameManager : MonoBehaviour {
 
             spawneds[Id].SetClickAction(() => {
                 if (isGameInteractable) {
+                    gamePlayEvents.OnGameplayStatusChange?.Invoke(false);
                     currentSession.InteractMember(X, Y);
                 }
             });
